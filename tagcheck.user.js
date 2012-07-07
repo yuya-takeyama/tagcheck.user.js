@@ -84,31 +84,31 @@
             if (EMPTYTAG.indexOf(tagName) >= 0 || (attr && attr.charAt(attr.length - 1) === '/')) {
                 // 空要素タグ
                 closed[head] = {
-                    open: head, 
+                    open: head,
                     openTail: tail,
-                    close: head, 
+                    close: head,
                     closeTail: tail,
-                    tagName: tagName, 
+                    tagName: tagName,
                     attr: attr
                 };
             } else {
                 var cls = closure(html, tail, tagName);
                 if (cls) {
                     opened[head] = closed[cls.head] = {
-                        open: head, 
+                        open: head,
                         openTail: tail,
-                        close: cls.head, 
+                        close: cls.head,
                         closeTail: cls.tail,
-                        tagName: tagName, 
+                        tagName: tagName,
                         attr: attr
                     };
                 } else {
                     errors.push({
                         id: errors.length,
-                        head:head, 
-                        tail:tail, 
-                        tagName: tagName, 
-                        attr: attr, 
+                        head: head,
+                        tail: tail,
+                        tagName: tagName,
+                        attr: attr,
                         message: "タグが閉じていません"
                     });
                 }
@@ -121,17 +121,17 @@
     (function () {
         var closePattern = /<\/([a-zA-Z1-9:]+)>/gm;
         var found = null;
-        while(found = closePattern.exec(html)) {
-            var head = found.index;
-            var tail = head + found[0].length;
-            var tagName = found[1].toLowerCase();
-            var attr = '';
+        while (found = closePattern.exec(html)) {
+            var head = found.index,
+                tail = head + found[0].length,
+                tagName = found[1].toLowerCase(),
+                attr = '';
             if (EMPTYTAG.indexOf(tagName) < 0) {
                 if (!closed[found.index]) {
                     errors.push({
                         id: errors.length,
-                        head:head,
-                        tail:tail,
+                        head: head,
+                        tail: tail,
                         tagName: '/' + tagName,
                         attr: attr,
                         message: "開きタグがありません"
@@ -144,10 +144,10 @@
 
     // 先に開いたタグが先に閉じているような箇所がないかチェックする
     (function () {
-        var checked = [];
-        for (var i in opened) {
-            var cl = opened[i];
-            for (var j = checked.length - 1; j >= 0; j--) {
+        var checked = [], i;
+        for (i in opened) {
+            var cl = opened[i], j;
+            for (j = checked.length - 1; j >= 0; j--) {
                 var ch = checked[j];
                 if (ch.open < cl.open 
                     && cl.open < ch.close 
@@ -196,21 +196,21 @@
                     return '';
                 case "\n":
                     var cls = sourceLine % 2 === 0 ? 'e' : 'o';
-                    return '</div>\n<div class="ln">' + (++sourceLine) 
-                            + '</div><div class="' + cls + '">&nbsp;';
+                    return '</div>\n<div class="ln">' + (++sourceLine) +
+                           '</div><div class="' + cls + '">&nbsp;';
                 case "\t":
                     return "&nbsp;&nbsp;&nbsp;&nbsp;";
                 case " ":
                     return "&nbsp;";
                 }
             });
-        }
-        var sourceCode = ['<div class="ln">1</div><div class="e">&nbsp;'];
+        },
+            sourceCode = ['<div class="ln">1</div><div class="e">&nbsp;'];
         errors.sort(function (a, b) {
             return a.head - b.head;
         });
-        var rular = 0;
-        for (var i = 0, l = errors.length; i < l; i++) {
+        var rular = 0, i, l;
+        for (i = 0, l = errors.length; i < l; i += 1) {
             var uc = errors[i];
             if (rular < uc.tail) {
                 var head = re(html.substring(rular, uc.head));
@@ -224,7 +224,8 @@
 
     // show list
     (function () {
-        for (var i = 0, l = errors.length; i < l; i++) {
+        var i, l;
+        for (i = 0, l = errors.length; i < l; i++) {
             var uc = errors[i];
             console.warn('Line ' + uc.lineNumber + ': <' + uc.tagName + '>: ' + uc.message);
         }
