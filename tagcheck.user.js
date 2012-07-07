@@ -147,11 +147,11 @@
         var checked = [], i;
         for (i in opened) {
             var cl = opened[i], j;
-            for (j = checked.length - 1; j >= 0; j--) {
+            for (j = checked.length - 1; j >= 0; j -= 1) {
                 var ch = checked[j];
-                if (ch.open < cl.open 
-                    && cl.open < ch.close 
-                    && ch.close < cl.close) {
+                if (ch.open < cl.open &&
+                        cl.open < ch.close &&
+                        ch.close < cl.close) {
                     // 親開く-子開く-親閉じる-子閉じるの順
                     errors.push({
                         id: errors.length,
@@ -185,7 +185,7 @@
         // make source code html
         var re = function (htmlCode) {
             return htmlCode.replace(/[<>&\r\n \t]/g, function (c) {
-                switch(c) {
+                switch (c) {
                 case '<':
                     return '&lt;';
                 case '>':
@@ -213,8 +213,8 @@
         for (i = 0, l = errors.length; i < l; i += 1) {
             var uc = errors[i];
             if (rular < uc.tail) {
-                var head = re(html.substring(rular, uc.head));
-                var tag = re(html.substring(uc.head, uc.tail));
+                var head = re(html.substring(rular, uc.head)),
+                    tag = re(html.substring(uc.head, uc.tail));
                 uc.lineNumber = sourceLine;
                 rular = uc.tail;
             }
@@ -225,7 +225,7 @@
     // show list
     (function () {
         var i, l;
-        for (i = 0, l = errors.length; i < l; i++) {
+        for (i = 0, l = errors.length; i < l; i += 1) {
             var uc = errors[i];
             console.warn('Line ' + uc.lineNumber + ': <' + uc.tagName + '>: ' + uc.message);
         }
