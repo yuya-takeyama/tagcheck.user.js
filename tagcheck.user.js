@@ -7,32 +7,29 @@
 (function (window) {
     "use strict";
 
-    var document = window.document;
-
-    console.info('Checking tags for ' + document.location.href);
-
     // remove inplanted script tag
     (function () {
-        var scriptTag = document.body.lastChild;
+        var scriptTag = window.document.body.lastChild;
         if (scriptTag.tagName === 'SCRIPT') {
-            document.body.removeChild(scriptTag);
+            window.document.body.removeChild(scriptTag);
         }
     })();
 
-    // Get html code by re-request
-    var html = (function () {
-        var ajax = (function () {
-            try {
-                return window.XMLHttpRequest ? new window.XMLHttpRequest()
-                    : (window.ActiveXObject ? new window.ActiveXObject('Msxml2.XMLHTTP') : null);
-            } catch (e) {
-                return new window.ActiveXObject('Microsoft.XMLHTTP');
-            }
-        })();
-        ajax.open("GET", document.location.href, false);
-        ajax.send('');
-        return ajax.responseText;
-    })(),
+    var document = window.document,
+        // Get html code by re-request
+        html = (function () {
+            var ajax = (function () {
+                try {
+                    return window.XMLHttpRequest ? new window.XMLHttpRequest()
+                        : (window.ActiveXObject ? new window.ActiveXObject('Msxml2.XMLHTTP') : null);
+                } catch (e) {
+                    return new window.ActiveXObject('Microsoft.XMLHTTP');
+                }
+            })();
+            ajax.open("GET", document.location.href, false);
+            ajax.send('');
+            return ajax.responseText;
+        })(),
         opened = {},
         closed = {},
         errors = [],
@@ -42,14 +39,16 @@
                     'param', 'wbr'];
 
     EMPTYTAG.indexOf = EMPTYTAG.indexOf || function (str) {
-        for (var i = 0, l = this.length; i < l; i++) {
-            if (this[i] == str) {
+        var i, l;
+        for (i = 0, l = this.length; i < l; i += 1) {
+            if (this[i] === str) {
                 return i;
             }
         }
         return -1;
     };
 
+    console.info('Checking tags for ' + document.location.href);
 
     // 開いたまま閉じていないタグを検索する
     (function () {
@@ -60,8 +59,8 @@
             var depth = 1;
             var r = null;
             while (r = closeRe.exec(html)) {
-                if (r[1] == '/') {
-                    if (--depth == 0) {
+                if (r[1] === '/') {
+                    if (--depth === 0) {
                         // すでに他の閉じタグになってる場合はfalse
                         return closed[r.index] ? false : {
                             head:r.index,
@@ -82,7 +81,7 @@
             var tagName = found[1].toLowerCase();
             var attr = found[2];
 
-            if (EMPTYTAG.indexOf(tagName) >= 0 || (attr && attr.charAt(attr.length - 1) == '/')) {
+            if (EMPTYTAG.indexOf(tagName) >= 0 || (attr && attr.charAt(attr.length - 1) === '/')) {
                 // 空要素タグ
                 closed[head] = {
                     open: head, 
@@ -196,7 +195,7 @@
                 case "\r":
                     return '';
                 case "\n":
-                    var cls = sourceLine % 2 == 0 ? 'e' : 'o';
+                    var cls = sourceLine % 2 === 0 ? 'e' : 'o';
                     return '</div>\n<div class="ln">' + (++sourceLine) 
                             + '</div><div class="' + cls + '">&nbsp;';
                 case "\t":
