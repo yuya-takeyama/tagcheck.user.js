@@ -23,24 +23,24 @@
     var html = (function () {
         var ajax = (function () {
             try {
-                return window.XMLHttpRequest ? new XMLHttpRequest()
-                    : (ActiveXObject ? new ActiveXObject('Msxml2.XMLHTTP') : null);
+                return window.XMLHttpRequest ? new window.XMLHttpRequest()
+                    : (window.ActiveXObject ? new window.ActiveXObject('Msxml2.XMLHTTP') : null);
             } catch (e) {
-                return new ActiveXObject('Microsoft.XMLHTTP');
+                return new window.ActiveXObject('Microsoft.XMLHTTP');
             }
         })();
-        ajax.open("GET", location.href, false);
+        ajax.open("GET", document.location.href, false);
         ajax.send('');
         return ajax.responseText;
-    })();
-    var opened = {};
-    var closed = {};
-    var errors = [];
+    })(),
+        opened = {},
+        closed = {},
+        errors = [],
+        // そもそも空要素のタグ
+        EMPTYTAG = ['img', 'link', 'meta', 'br', 'hr', 'input',
+                    'embed', 'area', 'base', 'basefont', 'bgsound',
+                    'param', 'wbr'];
 
-    // そもそも空要素のタグ
-    var EMPTYTAG = ['img', 'link', 'meta', 'br', 'hr', 'input', 
-                'embed', 'area', 'base', 'basefont', 'bgsound',
-                'param', 'wbr'];
     EMPTYTAG.indexOf = EMPTYTAG.indexOf || function (str) {
         for (var i = 0, l = this.length; i < l; i++) {
             if (this[i] == str) {
