@@ -72,13 +72,14 @@
                 }
             }
             return false;
-        };
-        var openPattern = /<([a-zA-Z1-9:]+)([^>]*)>/gm,
+        },
+            openPattern = /<([a-zA-Z1-9:]+)([^>]*)>/gm,
             found = null,
             head,
             tail,
             tagName,
-            attr;
+            attr,
+            cls;
         while (found = openPattern.exec(html)) {
             head = found.index;
             tail = head + found[0].length;
@@ -96,7 +97,7 @@
                     attr: attr
                 };
             } else {
-                var cls = closure(html, tail, tagName);
+                cls = closure(html, tail, tagName);
                 if (cls) {
                     opened[head] = closed[cls.head] = {
                         open: head,
@@ -123,13 +124,17 @@
 
     // 開きタグがない閉じタグを検索する
     (function () {
-        var closePattern = /<\/([a-zA-Z1-9:]+)>/gm;
-        var found = null;
+        var closePattern = /<\/([a-zA-Z1-9:]+)>/gm,
+            found = null,
+            head,
+            tail,
+            tagName,
+            attr;
         while (found = closePattern.exec(html)) {
-            var head = found.index,
-                tail = head + found[0].length,
-                tagName = found[1].toLowerCase(),
-                attr = '';
+            head = found.index;
+            tail = head + found[0].length;
+            tagName = found[1].toLowerCase();
+            attr = '';
             if (EMPTYTAG.indexOf(tagName) < 0) {
                 if (!closed[found.index]) {
                     errors.push({
@@ -148,11 +153,15 @@
 
     // 先に開いたタグが先に閉じているような箇所がないかチェックする
     (function () {
-        var checked = [], i;
+        var checked = [],
+            i,
+            cl,
+            j,
+            ch;
         for (i in opened) {
-            var cl = opened[i], j;
+            cl = opened[i];
             for (j = checked.length - 1; j >= 0; j -= 1) {
-                var ch = checked[j];
+                ch = checked[j];
                 if (ch.open < cl.open &&
                         cl.open < ch.close &&
                         ch.close < cl.close) {
