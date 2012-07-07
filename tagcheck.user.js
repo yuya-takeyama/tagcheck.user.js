@@ -56,30 +56,30 @@
         var closure = function (html, index, tagName) {
             var closeRe = new RegExp("<(/)?" + tagName + "( [^>]*)?>", "igm");
             closeRe.lastIndex = index;
-            var depth = 1;
-            var r = null;
+            var depth = 1,
+                r = null;
             while (r = closeRe.exec(html)) {
                 if (r[1] === '/') {
                     if (--depth === 0) {
                         // すでに他の閉じタグになってる場合はfalse
                         return closed[r.index] ? false : {
-                            head:r.index,
-                            tail:r.index + r[0].length
+                            head: r.index,
+                            tail: r.index + r[0].length
                         };
                     }
                 } else {
-                    depth ++;
+                    depth += 1;
                 }
             }
             return false;
         };
-        var openPattern = /<([a-zA-Z1-9:]+)([^>]*)>/gm;
-        var found = null;
-        while(found = openPattern.exec(html)) {
-            var head = found.index;
-            var tail = head + found[0].length;
-            var tagName = found[1].toLowerCase();
-            var attr = found[2];
+        var openPattern = /<([a-zA-Z1-9:]+)([^>]*)>/gm,
+            found = null;
+        while (found = openPattern.exec(html)) {
+            var head = found.index,
+                tail = head + found[0].length,
+                tagName = found[1].toLowerCase(),
+                attr = found[2];
 
             if (EMPTYTAG.indexOf(tagName) >= 0 || (attr && attr.charAt(attr.length - 1) === '/')) {
                 // 空要素タグ
