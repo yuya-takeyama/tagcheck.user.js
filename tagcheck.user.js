@@ -13,7 +13,7 @@
         if (scriptTag.tagName === 'SCRIPT') {
             window.document.body.removeChild(scriptTag);
         }
-    })();
+    }());
 
     var document = window.document,
         // Get html code by re-request
@@ -25,11 +25,11 @@
                 } catch (e) {
                     return new window.ActiveXObject('Microsoft.XMLHTTP');
                 }
-            })();
+            }());
             ajax.open("GET", document.location.href, false);
             ajax.send('');
             return ajax.responseText;
-        })(),
+        }()),
         opened = {},
         closed = {},
         errors = [],
@@ -54,10 +54,10 @@
     (function () {
         // 閉じタグの開始位置を返す
         var closure = function (html, index, tagName) {
-            var closeRe = new RegExp("<(/)?" + tagName + "( [^>]*)?>", "igm");
-            closeRe.lastIndex = index;
-            var depth = 1,
+            var closeRe = new RegExp("<(/)?" + tagName + "( [^>]*)?>", "igm"),
+                depth = 1,
                 r = null;
+            closeRe.lastIndex = index;
             while (r = closeRe.exec(html)) {
                 if (r[1] === '/') {
                     if (--depth === 0) {
@@ -74,12 +74,16 @@
             return false;
         };
         var openPattern = /<([a-zA-Z1-9:]+)([^>]*)>/gm,
-            found = null;
+            found = null,
+            head,
+            tail,
+            tagName,
+            attr;
         while (found = openPattern.exec(html)) {
-            var head = found.index,
-                tail = head + found[0].length,
-                tagName = found[1].toLowerCase(),
-                attr = found[2];
+            head = found.index;
+            tail = head + found[0].length;
+            tagName = found[1].toLowerCase();
+            attr = found[2];
 
             if (EMPTYTAG.indexOf(tagName) >= 0 || (attr && attr.charAt(attr.length - 1) === '/')) {
                 // 空要素タグ
@@ -115,7 +119,7 @@
             }
             openPattern.lastIndex = tail;
         }
-    })();
+    }());
 
     // 開きタグがない閉じタグを検索する
     (function () {
@@ -140,7 +144,7 @@
             }
             closePattern.lastIndex = tail;
         }
-    })();
+    }());
 
     // 先に開いたタグが先に閉じているような箇所がないかチェックする
     (function () {
@@ -176,58 +180,63 @@
             }
             checked.push(cl);
         }
-    })();
+    }());
 
 
     // show sourcecode
     (function () {
-        var sourceLine = 1;
+        var sourceLine = 1,
         // make source code html
-        var re = function (htmlCode) {
-            return htmlCode.replace(/[<>&\r\n \t]/g, function (c) {
-                switch (c) {
-                case '<':
-                    return '&lt;';
-                case '>':
-                    return '&gt;';
-                case '&':
-                    return '&amp;';
-                case "\r":
-                    return '';
-                case "\n":
-                    var cls = sourceLine % 2 === 0 ? 'e' : 'o';
-                    return '</div>\n<div class="ln">' + (++sourceLine) +
-                           '</div><div class="' + cls + '">&nbsp;';
-                case "\t":
-                    return "&nbsp;&nbsp;&nbsp;&nbsp;";
-                case " ":
-                    return "&nbsp;";
-                }
-            });
-        },
-            sourceCode = ['<div class="ln">1</div><div class="e">&nbsp;'];
+            re = function (htmlCode) {
+                return htmlCode.replace(/[<>&\r\n \t]/g, function (c) {
+                    switch (c) {
+                    case '<':
+                        return '&lt;';
+                    case '>':
+                        return '&gt;';
+                    case '&':
+                        return '&amp;';
+                    case "\r":
+                        return '';
+                    case "\n":
+                        var cls = sourceLine % 2 === 0 ? 'e' : 'o';
+                        return '</div>\n<div class="ln">' + (++sourceLine) +
+                               '</div><div class="' + cls + '">&nbsp;';
+                    case "\t":
+                        return "&nbsp;&nbsp;&nbsp;&nbsp;";
+                    case " ":
+                        return "&nbsp;";
+                    }
+                });
+            },
+            sourceCode = ['<div class="ln">1</div><div class="e">&nbsp;'],
+            rular = 0,
+            i,
+            l,
+            uc,
+            head,
+            tag;
         errors.sort(function (a, b) {
             return a.head - b.head;
         });
-        var rular = 0, i, l;
         for (i = 0, l = errors.length; i < l; i += 1) {
-            var uc = errors[i];
+            uc = errors[i];
             if (rular < uc.tail) {
-                var head = re(html.substring(rular, uc.head)),
-                    tag = re(html.substring(uc.head, uc.tail));
+                head = re(html.substring(rular, uc.head));
+                tag = re(html.substring(uc.head, uc.tail));
                 uc.lineNumber = sourceLine;
                 rular = uc.tail;
             }
         }
         sourceCode.push(re(html.substring(rular)), '<br clear="all">');
-    })();
+    }());
 
     // show list
     (function () {
-        var i, l;
+        var i, l, uc;
         for (i = 0, l = errors.length; i < l; i += 1) {
-            var uc = errors[i];
+            uc = errors[i];
             console.warn('Line ' + uc.lineNumber + ': <' + uc.tagName + '>: ' + uc.message);
         }
-    })();
-})(this);
+    }());
+}(this));
