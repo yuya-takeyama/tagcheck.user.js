@@ -1,9 +1,9 @@
 // ==UserScript==
-// // @name           tagcheck.user.js
-// // @namespace      http://yuyat.jp/
-// // @description    Alert if unclosed tag is detected.
-// // @include        *
-// // ==/UserScript==
+// @name           tagcheck.user.js
+// @namespace      http://yuyat.jp/
+// @description    Alert if unclosed tag is detected.
+// @include        *
+// ==/UserScript==
 (function (window) {
     "use strict";
 
